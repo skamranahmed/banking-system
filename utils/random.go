@@ -46,6 +46,11 @@ func RandomMoney() int64 {
 	return RandomInt(0, 1000)
 }
 
+// RandomEntryAmount : returns a random entry amount, can be both positive or negative
+func RandomEntryAmount() int64 {
+	return RandomInt(-1000, 1000)
+}
+
 // RandomCurrency : returns a random `defined` currency
 func RandomCurrency() string {
 	currencies := []string{INR, USD}
