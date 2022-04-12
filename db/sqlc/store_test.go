@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestTransferTx(t *testing.T) {
+func TestTransferTxn(t *testing.T) {
 	store := NewStore(testDB)
 
 	account1 := createRandomAccount(t)
@@ -128,5 +128,69 @@ func TestTransferTx(t *testing.T) {
 
 	require.Equal(t, account1.Balance-int64(n)*amount, updatedAccount1.Balance)
 	require.Equal(t, account2.Balance+int64(n)*amount, updatedAccount2.Balance)
+
+}
+
+func TestTransferTxnDeadlock(t *testing.T) {
+	store := NewStore(testDB)
+
+	account1 := createRandomAccount(t)
+	account2 := createRandomAccount(t)
+
+	fmt.Println("-----------------------------------------------------------")
+	fmt.Println("Account1 Balance Before Transaction(s): ", account1.Balance)
+	fmt.Println("Account2 Balance Before Transaction(s): ", account2.Balance)
+	fmt.Println("-----------------------------------------------------------")
+
+	n := 10
+	amount := int64(10)
+
+	errs := make(chan error)
+
+	// run concurrent transfer transactions
+	for i := 0; i < n; i++ {
+		txnName := fmt.Sprintf("txn: %d", i+1)
+
+		fromAccountID := account1.ID
+		toAccountID := account2.ID
+
+		if i%2 == 1 {
+			fromAccountID = account2.ID
+			toAccountID = account1.ID
+		}
+
+		go func() {
+			ctx := context.WithValue(context.Background(), txnKey, txnName)
+			// transfer money from account1 to account2
+			_, err := store.TransferTxn(ctx, TransferTxnParams{
+				FromAccountID: fromAccountID,
+				ToAccountID:   toAccountID,
+				Amount:        amount,
+			})
+
+			errs <- err
+		}()
+	}
+
+	// check errors
+	for i := 0; i < n; i++ {
+		err := <-errs
+		require.NoError(t, err)
+	}
+
+	// check the final updated balance of both the accounts
+	updatedAccount1, err := testQueries.GetAccount(context.Background(), account1.ID)
+	require.NoError(t, err)
+
+	updatedAccount2, err := testQueries.GetAccount(context.Background(), account2.ID)
+	require.NoError(t, err)
+
+	fmt.Println("-----------------------------------------------------------")
+	fmt.Println("Account1 Balance After Transaction(s): ", updatedAccount1.Balance)
+	fmt.Println("Account2 Balance After Transaction(s): ", updatedAccount2.Balance)
+	fmt.Println("-----------------------------------------------------------")
+
+	require.Equal(t, account1.Balance, updatedAccount1.Balance)
+	require.Equal(t, account2.Balance, updatedAccount2.Balance)
 
 }

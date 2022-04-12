@@ -108,52 +108,149 @@ func (s *Store) TransferTxn(ctx context.Context, arg TransferTxnParams) (Transfe
 		}
 
 		// logic for updating the account balance of `from account` and `to account`
-		// fmt.Println(txnName, "get account 1 for update")
-		// account1, err := q.GetAccountForUpdate(ctx, arg.FromAccountID)
-		// if err != nil {
-		// 	return err
-		// }
+		
+		/*
+			// fmt.Println(txnName, "get account 1 for update")
+			// account1, err := q.GetAccountForUpdate(ctx, arg.FromAccountID)
+			// if err != nil {
+			// 	return err
+			// }
+
+			// fmt.Println(txnName, "update account 1")
+			// result.FromAccount, err = q.UpdateAccount(ctx, UpdateAccountParams{
+			// 	ID:      arg.FromAccountID,
+			// 	Balance: account1.Balance - arg.Amount,
+			// })
+			// if err != nil {
+			// 	return err
+			// }
+		*/
 
 		// fmt.Println(txnName, "update account 1")
-		// result.FromAccount, err = q.UpdateAccount(ctx, UpdateAccountParams{
-		// 	ID:      arg.FromAccountID,
-		// 	Balance: account1.Balance - arg.Amount,
+		// result.FromAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+		// 	ID:     arg.FromAccountID,
+		// 	Amount: -arg.Amount,
 		// })
 		// if err != nil {
 		// 	return err
 		// }
 
-		fmt.Println(txnName, "update account 1")
-		result.FromAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
-			ID:     arg.FromAccountID,
-			Amount: -arg.Amount,
-		})
-		if err != nil {
-			return err
-		}
+		/*
+			// fmt.Println(txnName, "get account 2 for update")
+			// account2, err := q.GetAccountForUpdate(ctx, arg.ToAccountID)
+			// if err != nil {
+			// 	return err
+			// }
 
-		// fmt.Println(txnName, "get account 2 for update")
-		// account2, err := q.GetAccountForUpdate(ctx, arg.ToAccountID)
-		// if err != nil {
-		// 	return err
-		// }
+			// fmt.Println(txnName, "update account 2")
+			// result.ToAccount, err = q.UpdateAccount(ctx, UpdateAccountParams{
+			// 	ID:      arg.ToAccountID,
+			// 	Balance: account2.Balance + arg.Amount,
+			// })
+			// if err != nil {
+			// 	return err
+			// }
+		*/
 
 		// fmt.Println(txnName, "update account 2")
-		// result.ToAccount, err = q.UpdateAccount(ctx, UpdateAccountParams{
-		// 	ID:      arg.ToAccountID,
-		// 	Balance: account2.Balance + arg.Amount,
+		// result.ToAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+		// 	ID:     arg.ToAccountID,
+		// 	Amount: arg.Amount,
 		// })
 		// if err != nil {
 		// 	return err
 		// }
 
-		fmt.Println(txnName, "update account 2")
-		result.ToAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
-			ID:     arg.ToAccountID,
-			Amount: arg.Amount,
-		})
-		if err != nil {
-			return err
+		/*
+			----------------------------------------------------------------------------------------------
+
+			##################           Possible Deadlock Situation                ######################
+
+			-- Transaction 1: transfer Rs.10 from account 1 to account 2
+			BEGIN;
+
+			UPDATE accounts SET balance = balance - 10 WHERE id = 1 RETURNING *;
+			UPDATE accounts SET balance = balance + 10 WHERE id = 2 RETURNING *;
+
+			COMMIT;
+
+
+			-- Transaction 2: transfer Rs.10 from account 2 to account 1
+			BEGIN;
+
+			UPDATE accounts SET balance = balance - 10 WHERE id = 2 RETURNING *;
+			UPDATE accounts SET balance = balance + 10 WHERE id = 1 RETURNING *;
+
+			COMMIT;
+
+			----------------------------------------------------------------------------------------------
+
+			##################           Solution for Preventing Deadlock              ###################
+
+
+
+			if from_account_id < to_account_id -> We update the from_account first and then the to_account
+			if the from_account_id > to_account_id -> We update the to_account first and then the from account
+
+			-- Transaction 1: transfer Rs.10 from account 1 to account 2
+			BEGIN;
+
+			UPDATE accounts SET balance = balance - 10 WHERE id = 1 RETURNING *;
+			UPDATE accounts SET balance = balance + 10 WHERE id = 2 RETURNING *;
+
+			COMMIT;
+
+
+			-- Transaction 2: transfer Rs.10 from account 2 to account 1
+			BEGIN;
+
+			UPDATE accounts SET balance = balance + 10 WHERE id = 1 RETURNING *;
+			UPDATE accounts SET balance = balance - 10 WHERE id = 2 RETURNING *;
+
+			COMMIT;
+
+			----------------------------------------------------------------------------------------------
+
+		*/
+
+		if arg.FromAccountID < arg.ToAccountID {
+			fmt.Println(txnName, "updating the fromAccount")
+			result.FromAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+				ID:     arg.FromAccountID,
+				Amount: -arg.Amount, // debit
+			})
+			if err != nil {
+				return err
+			}
+
+			fmt.Println(txnName, "updating the toAccount")
+			result.ToAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+				ID:     arg.ToAccountID,
+				Amount: arg.Amount, // credit
+			})
+			if err != nil {
+				return err
+			}
+
+		} else {
+			fmt.Println(txnName, "updating the toAccount")
+			result.ToAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+				ID:     arg.ToAccountID,
+				Amount: arg.Amount, // credit
+			})
+			if err != nil {
+				return err
+			}
+
+			fmt.Println(txnName, "updating the fromAccount")
+			result.FromAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+				ID:     arg.FromAccountID,
+				Amount: -arg.Amount, // debit
+			})
+			if err != nil {
+				return err
+			}
+
 		}
 
 		return nil
