@@ -7,4 +7,7 @@ migrate-up:
 migrate-down:
 	migrate -path db/migration -database "postgresql://postgres:password@localhost:5432/bank?sslmode=disable" -verbose down
 
-.PHONY: create-migration migrate-up
+sqlc-gen:
+	sqlc generate
+
+.PHONY: create-migration migrate-up sqlc-gen
