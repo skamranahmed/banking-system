@@ -29,6 +29,15 @@ type Transfer struct {
 	CreatedAt     time.Time `json:"created_at"`
 	FromAccountID int64     `json:"from_account_id"`
 	ToAccountID   int64     `json:"to_account_id"`
-	// must always be positive
+	// must be positive
 	Amount int64 `json:"amount"`
+}
+
+type User struct {
+	ID        int64     `json:"id"`
+	CreatedAt time.Time `json:"created_at"`
+	Username  string    `json:"username"`
+	Password  string    `json:"password"`
+	FullName  string    `json:"full_name"`
+	Email     string    `json:"email"`
 }

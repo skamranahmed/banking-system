@@ -20,7 +20,7 @@ test:
 	go clean -testcache && go test -v -cover ./...
 
 mock-db:
-	mockgen -package mockdb -destination db/mock/store.go github.com/skamranahmed/simple-bank/db/sqlc Store
+	mockgen -package mockdb -destination db/mock/store.go github.com/skamranahmed/banking-system/db/sqlc Store
 
 run:
 	go run main.go
