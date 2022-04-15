@@ -31,8 +31,8 @@ func RandomString(n int) string {
 	return sb.String()
 }
 
-// RandomOwner : returns a random Owner string
-func RandomOwner() string {
+// RandomName : returns a random Owner string
+func RandomName() string {
 	return RandomString(6)
 }
 
