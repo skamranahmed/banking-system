@@ -57,7 +57,7 @@ func (server *Server) createTransfer(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, result)
+	c.JSON(http.StatusOK, result)
 	return
 }
 
