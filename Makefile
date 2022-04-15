@@ -19,4 +19,7 @@ sqlc-gen:
 test:
 	go clean -testcache && go test -v -cover ./...
 
-.PHONY: create-migration migrate-up migrate-up-test migrate-down migrate-down-test sqlc-gen test
+run:
+	go run main.go
+
+.PHONY: create-migration migrate-up migrate-up-test migrate-down migrate-down-test sqlc-gen test run
