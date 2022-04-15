@@ -19,7 +19,10 @@ sqlc-gen:
 test:
 	go clean -testcache && go test -v -cover ./...
 
+mock-db:
+	mockgen -package mockdb -destination db/mock/store.go github.com/skamranahmed/simple-bank/db/sqlc Store
+
 run:
 	go run main.go
 
-.PHONY: create-migration migrate-up migrate-up-test migrate-down migrate-down-test sqlc-gen test run
+.PHONY: create-migration migrate-up migrate-up-test migrate-down migrate-down-test sqlc-gen test mock-db run
