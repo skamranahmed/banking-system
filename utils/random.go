@@ -7,11 +7,6 @@ import (
 	"time"
 )
 
-const (
-	INR = "INR"
-	USD = "USD"
-)
-
 const alphabets = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 func init() {

@@ -15,7 +15,7 @@ type transferRequest struct {
 	FromAccountID int64  `json:"from_account_id" binding:"required,min=1"` // the account from where the money is getting debited
 	ToAccountID   int64  `json:"to_account_id" binding:"required,min=1"`   // the account to which the money is getting credited
 	Amount        int64  `json:"amount" binding:"required,gt=0"`
-	Currency      string `json:"currency" binding:"required,oneof=INR USD EUR"`
+	Currency      string `json:"currency" binding:"required,currency"`
 }
 
 func (server *Server) createTransfer(c *gin.Context) {
