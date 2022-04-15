@@ -9,21 +9,28 @@ import (
 
 var txnKey = struct{}{}
 
-type Store struct {
+// Store provides all functions to execute db queries and transaction
+type Store interface {
+	Querier
+	TransferTxn(ctx context.Context, arg TransferTxnParams) (TransferTxnResult, error)
+}
+
+// SQLStore provides all functions to execute SQL queries and transaction
+type SQLStore struct {
 	*Queries
 	db *sql.DB // this is required to create a new db txn
 }
 
 // NewStore : creates a new Store
-func NewStore(db *sql.DB) *Store {
-	return &Store{
+func NewStore(db *sql.DB) Store {
+	return &SQLStore{
 		db:      db,
 		Queries: New(db),
 	}
 }
 
 // execTxn : executes a function within a db transaction
-func (s *Store) execTxn(ctx context.Context, fn func(*Queries) error) error {
+func (s *SQLStore) execTxn(ctx context.Context, fn func(*Queries) error) error {
 	// begin the transaction
 	txn, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -62,7 +69,7 @@ type TransferTxnResult struct {
 }
 
 // TransferTxn : performs money transfer from one account to the other
-func (s *Store) TransferTxn(ctx context.Context, arg TransferTxnParams) (TransferTxnResult, error) {
+func (s *SQLStore) TransferTxn(ctx context.Context, arg TransferTxnParams) (TransferTxnResult, error) {
 	/*
 		Steps Involved:
 		- Begin Transaction
@@ -108,7 +115,6 @@ func (s *Store) TransferTxn(ctx context.Context, arg TransferTxnParams) (Transfe
 		}
 
 		// logic for updating the account balance of `from account` and `to account`
-		
 		/*
 			// fmt.Println(txnName, "get account 1 for update")
 			// account1, err := q.GetAccountForUpdate(ctx, arg.FromAccountID)

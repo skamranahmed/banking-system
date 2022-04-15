@@ -15,8 +15,3 @@
   - Perform money transaction between 2 accounts consistently within a transaction
 
 ## DB Schema
-
-
-## Developer
-
-- [@skamranahmed](https://github.com/skamranahmed)

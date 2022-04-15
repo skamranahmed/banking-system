@@ -9,12 +9,12 @@ import (
 
 // Server : will serve the HTTP requests for our API
 type Server struct {
-	store  *db.Store
+	store  db.Store
 	router *gin.Engine
 }
 
 // NewServer : will create a new Server and also setup the routes
-func NewServer(store *db.Store) *Server {
+func NewServer(store db.Store) *Server {
 	server := &Server{
 		store: store,
 	}
