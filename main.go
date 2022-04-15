@@ -5,20 +5,19 @@ import (
 	"log"
 
 	"github.com/skamranahmed/banking-system/api"
+	"github.com/skamranahmed/banking-system/config"
+
 	db "github.com/skamranahmed/banking-system/db/sqlc"
 
 	_ "github.com/lib/pq"
 )
 
-const (
-	dbDriver      = "postgres"
-	dbSource      = "postgresql://postgres:password@localhost:5432/bank?sslmode=disable"
-	serverAddress = "localhost:8080"
-)
-
 func main() {
+	// load config
+	config.Load("./config")
+
 	// open the db connection
-	conn, err := sql.Open(dbDriver, dbSource)
+	conn, err := sql.Open(config.DbDriver, config.DbHost)
 	if err != nil {
 		log.Fatalf("unable to connect to the db, error: %s", err)
 	}
@@ -30,7 +29,7 @@ func main() {
 	store := db.NewStore(conn)
 	server := api.NewServer(store)
 
-	err = server.Start(serverAddress)
+	err = server.Start(config.ServerPort)
 	if err != nil {
 		log.Fatalf("unable to start server, error: %s", err)
 	}

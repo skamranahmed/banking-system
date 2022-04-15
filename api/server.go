@@ -1,6 +1,8 @@
 package api
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	db "github.com/skamranahmed/banking-system/db/sqlc"
 )
@@ -21,16 +23,17 @@ func NewServer(store *db.Store) *Server {
 	router := gin.Default()
 
 	// setup routes
+	router.GET("/accounts", server.listAccounts)
 	router.POST("/accounts", server.createAccount)
 	router.GET("/accounts/:id", server.getAccount)
-	router.GET("/accounts", server.listAccounts)
 
 	server.router = router
 	return server
 }
 
-// Start runs the HTTP server on the provided address 
-func (server *Server) Start(address string) error {
+// Start runs the HTTP server on the provided port
+func (server *Server) Start(port string) error {
+	address := fmt.Sprintf(":%s", port)
 	return server.router.Run(address)
 }
 
