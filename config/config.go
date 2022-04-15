@@ -38,8 +38,9 @@ var (
 	// Environment
 	Environment AppEnvironment
 
-	// slice of all app environments except the `local`` env
+	// slice of all app environments except the `local` env
 	AppEnvironemnts = []AppEnvironment{
+		AppEnvironmentGithub,
 		AppEnvironmentProduction,
 	}
 )
@@ -47,6 +48,9 @@ var (
 const (
 	// AppEnvironmentLocal : local env
 	AppEnvironmentLocal = AppEnvironment("local")
+
+	// AppEnvironmentGithub : github env
+	AppEnvironmentGithub = AppEnvironment("github")
 
 	// AppEnvironmentLocal : production env
 	AppEnvironmentProduction = AppEnvironment("production")

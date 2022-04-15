@@ -45,4 +45,8 @@ jobs:
         run: make migrate-up-test
 
       - name: Test
+        env:
+          ENVIRONMENT: "github"
+          TEST_DB_DRIVER: "postgres"
+          TEST_DB_HOST: "postgresql://postgres:password@localhost:5432/bank_test?sslmode=disable"
         run: make test
