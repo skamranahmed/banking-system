@@ -107,12 +107,12 @@ func TestCreateAccountAPI(t *testing.T) {
 		{
 			name: "Happy Case - All OK : Account Created",
 			body: gin.H{
-				"owner":    account.Owner,
+				"user_id":  account.UserID,
 				"currency": account.Currency,
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				arg := db.CreateAccountParams{
-					Owner:    account.Owner,
+					UserID:   account.UserID,
 					Currency: account.Currency,
 					Balance:  0,
 				}
@@ -127,7 +127,7 @@ func TestCreateAccountAPI(t *testing.T) {
 		{
 			name: "Failure Case - Invalid Currency Value",
 			body: gin.H{
-				"owner":    account.Owner,
+				"user_id":  account.UserID,
 				"currency": "invalid",
 			},
 			buildStubs: func(store *mockdb.MockStore) {
@@ -138,9 +138,9 @@ func TestCreateAccountAPI(t *testing.T) {
 			expectStatus: http.StatusBadRequest,
 		},
 		{
-			name: "Failure Case - Invalid Owner Value",
+			name: "Failure Case - Invalid User ID Value",
 			body: gin.H{
-				"owner":    "",
+				"user_id":  "",
 				"currency": account.Currency,
 			},
 			buildStubs: func(store *mockdb.MockStore) {
@@ -153,7 +153,7 @@ func TestCreateAccountAPI(t *testing.T) {
 		{
 			name: "Failure Case - Internal Server Error",
 			body: gin.H{
-				"owner":    account.Owner,
+				"user_id":  account.UserID,
 				"currency": account.Currency,
 			},
 			buildStubs: func(store *mockdb.MockStore) {
@@ -195,7 +195,7 @@ func TestCreateAccountAPI(t *testing.T) {
 func randomAccount(id int64) db.Account {
 	return db.Account{
 		ID:        id,
-		Owner:     utils.RandomOwner(),
+		UserID:    utils.RandomInt(1, 1000),
 		Balance:   utils.RandomMoney(),
 		Currency:  utils.RandomCurrency(),
 		CreatedAt: time.Now(),

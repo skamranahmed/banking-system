@@ -12,7 +12,7 @@ import (
 
 func createRandomAccount(t *testing.T) Account {
 	arg := CreateAccountParams{
-		Owner:    utils.RandomOwner(),
+		UserID:   utils.RandomInt(1, 1000),
 		Balance:  utils.RandomMoney(),
 		Currency: utils.RandomCurrency(),
 	}
@@ -21,7 +21,7 @@ func createRandomAccount(t *testing.T) Account {
 	require.NoError(t, err)
 	require.NotEmpty(t, account)
 
-	require.Equal(t, arg.Owner, account.Owner)
+	require.Equal(t, arg.UserID, account.UserID)
 	require.Equal(t, arg.Balance, account.Balance)
 	require.Equal(t, arg.Currency, account.Currency)
 
@@ -32,22 +32,6 @@ func createRandomAccount(t *testing.T) Account {
 }
 
 func TestCreateAccount(t *testing.T) {
-	// arg := CreateAccountParams{
-	// 	Owner:    utils.RandomOwner(),
-	// 	Balance:  utils.RandomMoney(),
-	// 	Currency: utils.RandomCurrency(),
-	// }
-
-	// account, err := testQueries.CreateAccount(context.Background(), arg)
-	// require.NoError(t, err)
-	// require.NotEmpty(t, account)
-
-	// require.Equal(t, arg.Owner, account.Owner)
-	// require.Equal(t, arg.Balance, account.Balance)
-	// require.Equal(t, arg.Currency, account.Currency)
-
-	// require.NotZero(t, account.ID)
-	// require.NotZero(t, account.CreatedAt)
 	createRandomAccount(t)
 }
 
@@ -58,7 +42,7 @@ func TestGetAccount(t *testing.T) {
 	require.NotEmpty(t, account2)
 
 	require.Equal(t, account1.ID, account2.ID)
-	require.Equal(t, account1.Owner, account2.Owner)
+	require.Equal(t, account1.UserID, account2.UserID)
 	require.Equal(t, account1.Balance, account2.Balance)
 	require.Equal(t, account1.Currency, account2.Currency)
 
@@ -78,7 +62,7 @@ func TestUpdateAccount(t *testing.T) {
 	require.NotEmpty(t, account2)
 
 	require.Equal(t, account1.ID, account2.ID)
-	require.Equal(t, account1.Owner, account2.Owner)
+	require.Equal(t, account1.UserID, account2.UserID)
 	require.Equal(t, arg.Balance, account2.Balance)
 	require.Equal(t, account1.Currency, account2.Currency)
 	require.WithinDuration(t, account1.CreatedAt, account2.CreatedAt, time.Second)
