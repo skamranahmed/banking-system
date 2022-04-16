@@ -49,4 +49,6 @@ jobs:
           ENVIRONMENT: "github"
           TEST_DB_DRIVER: "postgres"
           TEST_DB_HOST: "postgresql://postgres:password@localhost:5432/bank_test?sslmode=disable"
+          ACCESS_TOKEN_DURATION: ${{ secrets.ACCESS_TOKEN_DURATION }} # in minutes
+          TOKEN_SIGNING_KEY: ${{ secrets.TOKEN_SIGNING_KEY }}
         run: make test

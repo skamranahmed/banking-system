@@ -15,3 +15,4 @@
   - Perform money transaction between 2 accounts consistently within a transaction
 
 ## DB Schema
+![Banking-System](https://user-images.githubusercontent.com/43776315/163681485-499ea22d-b2fd-49d9-acd6-0d23792cc164.png)
