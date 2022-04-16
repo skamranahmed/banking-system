@@ -1,7 +1,9 @@
 package config
 
 import (
+	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/spf13/viper"
 
@@ -34,7 +36,7 @@ var (
 
 	// Token
 	TokenSigningKey     string
-	AccessTokenDuration string
+	AccessTokenDuration int // in minutes
 
 	// Server
 	ServerPort string
@@ -75,6 +77,7 @@ func Load(path string) {
 }
 
 func SetConfigFromViper(path string) {
+	var err error
 	Environment = getCurrentHostEnvironment()
 	log.Printf("🚀 Current Host Environment: %s\n", Environment)
 
@@ -102,7 +105,10 @@ func SetConfigFromViper(path string) {
 
 	// Token
 	TokenSigningKey = os.Getenv("TOKEN_SIGNING_KEY")
-	AccessTokenDuration = os.Getenv("ACCESS_TOKEN_DURATION")
+	AccessTokenDuration, err = strconv.Atoi(os.Getenv("ACCESS_TOKEN_DURATION"))
+	if err != nil {
+		log.Fatalf("unable to fetch AccessTokenDuration value from env, err: %v", err)
+	}
 
 	// Server
 	ServerPort = os.Getenv("SERVER_PORT")
@@ -158,9 +164,9 @@ func setEnvironmentVarsFromConfig(path string) {
 
 	// Token
 	tokenSigningKey := viper.GetString("TOKEN_SIGNING_KEY")
-	accessTokenDuration := viper.GetString("ACCESS_TOKEN_DURATION")
+	accessTokenDuration := viper.GetInt("ACCESS_TOKEN_DURATION")
 	os.Setenv("TOKEN_SIGNING_KEY", tokenSigningKey)
-	os.Setenv("ACCESS_TOKEN_DURATION", accessTokenDuration)
+	os.Setenv("ACCESS_TOKEN_DURATION", fmt.Sprintf("%d", accessTokenDuration))
 
 	// Server
 	serverPort := viper.GetString("SERVER_PORT")

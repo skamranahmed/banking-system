@@ -30,24 +30,29 @@ func NewServer(store db.Store) (*Server, error) {
 		tokenMaker: tokenMaker,
 	}
 
-	// gin router
-	router := gin.Default()
-
 	// get the binding engine that gin is using
 	v, ok := binding.Validator.Engine().(*validator.Validate)
 	if ok {
 		v.RegisterValidation("currency", validCurrency)
 	}
 
+	server.setupRouter()
+	return server, nil
+}
+
+func (server *Server) setupRouter() {
+	// gin router
+	router := gin.Default()
+
 	// setup routes
 	router.POST("/users", server.createUser)
+	router.POST("/users/login", server.loginUser)
 	router.GET("/accounts", server.listAccounts)
 	router.POST("/accounts", server.createAccount)
 	router.GET("/accounts/:id", server.getAccount)
 	router.POST("/transfers", server.createTransfer)
 
 	server.router = router
-	return server, nil
 }
 
 // Start runs the HTTP server on the provided port
