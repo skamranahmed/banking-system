@@ -6,19 +6,28 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
+	"github.com/skamranahmed/banking-system/config"
 	db "github.com/skamranahmed/banking-system/db/sqlc"
+	"github.com/skamranahmed/banking-system/token"
 )
 
 // Server : will serve the HTTP requests for our API
 type Server struct {
-	store  db.Store
-	router *gin.Engine
+	store      db.Store
+	tokenMaker token.Maker
+	router     *gin.Engine
 }
 
 // NewServer : will create a new Server and also setup the routes
-func NewServer(store db.Store) *Server {
+func NewServer(store db.Store) (*Server, error) {
+	tokenMaker, err := token.NewJWTMaker(config.TokenSigningKey)
+	if err != nil {
+		return nil, fmt.Errorf("unable to initialise token maker, err: %v", err)
+	}
+
 	server := &Server{
-		store: store,
+		store:      store,
+		tokenMaker: tokenMaker,
 	}
 
 	// gin router
@@ -38,7 +47,7 @@ func NewServer(store db.Store) *Server {
 	router.POST("/transfers", server.createTransfer)
 
 	server.router = router
-	return server
+	return server, nil
 }
 
 // Start runs the HTTP server on the provided port

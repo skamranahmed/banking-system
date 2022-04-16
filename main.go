@@ -27,10 +27,13 @@ func main() {
 
 	// instantiate dependencies
 	store := db.NewStore(conn)
-	server := api.NewServer(store)
+	server, err := api.NewServer(store)
+	if err != nil {
+		log.Fatalf("unable to instantiate server, error: %v", err)
+	}
 
 	err = server.Start(config.ServerPort)
 	if err != nil {
-		log.Fatalf("unable to start server, error: %s", err)
+		log.Fatalf("unable to start server, error: %v", err)
 	}
 }
