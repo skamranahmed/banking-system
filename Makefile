@@ -22,7 +22,10 @@ test:
 mock-db:
 	mockgen -package mockdb -destination db/mock/store.go github.com/skamranahmed/banking-system/db/sqlc Store
 
+build:
+	docker build -t banking-system:latest .
+
 run:
 	go run main.go
 
-.PHONY: create-migration migrate-up migrate-up-test migrate-down migrate-down-test sqlc-gen test mock-db run
+.PHONY: create-migration migrate-up migrate-up-test migrate-down migrate-down-test sqlc-gen test mock-db build run
