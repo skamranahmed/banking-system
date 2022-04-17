@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	db "github.com/skamranahmed/banking-system/db/sqlc"
+	"github.com/skamranahmed/banking-system/token"
 
 	"github.com/gin-gonic/gin"
 )
@@ -26,9 +27,19 @@ func (server *Server) createTransfer(c *gin.Context) {
 		return
 	}
 
+	// extract the authPayload from the request context
+	authPayload := c.MustGet(authorizationPayloadKey).(*token.Payload)
+
 	// verify the currency of `fromAccount`
 	fromAccount, isFromAccountValid := server.validAccount(c, req.FromAccountID, req.Currency)
 	if !isFromAccountValid {
+		return
+	}
+
+	// verify whether the `fromAccount` belongs to the authenticated user
+	if fromAccount.UserID != int64(authPayload.UserID) {
+		err := errors.New("fromAccount does not belong to the authenticated user")
+		c.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
 	}
 
