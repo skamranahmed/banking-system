@@ -12,7 +12,6 @@ import (
 )
 
 type createAccountRequest struct {
-	UserID   int64  `json:"user_id" binding:"required"`
 	Currency string `json:"currency" binding:"required,currency"`
 }
 
