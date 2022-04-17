@@ -1,0 +1,22 @@
+# Database
+DB_DRIVER: "postgres"
+DB_HOST: "postgresql://postgres:password@localhost:5432/bank?sslmode=disable"
+DB_USER: "postgres"
+DB_NAME: "bank"
+DB_PASSWORD: "password"
+DB_PORT: "5432"
+
+# Test Database
+TEST_DB_DRIVER: "postgres"
+TEST_DB_HOST: "postgresql://postgres:password@localhost:5432/bank_test?sslmode=disable"
+TEST_DB_USER: "postgres"
+TEST_DB_NAME: "bank_test"
+TEST_DB_PASSWORD: "password"
+TEST_DB_PORT: "5432"
+
+# Token
+TOKEN_SIGNING_KEY: "12345678901234567890123456789012" # must be of length 32
+ACCESS_TOKEN_DURATION: 15 # in minutes
+
+# Server
+SERVER_PORT: "8080"
