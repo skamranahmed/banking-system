@@ -123,6 +123,8 @@ func setEnvironmentVarsFromConfig(path string) {
 	// set the config file type
 	viper.SetConfigType(ConfigFileType)
 
+	viper.AutomaticEnv()
+
 	// read the env vars from the config file
 	err := viper.ReadInConfig()
 	if err != nil {

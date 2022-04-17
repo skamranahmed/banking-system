@@ -20,6 +20,9 @@ WORKDIR /app
 # copy the binary build from the builder to the current stage container
 COPY --from=builder /app/main .
 
+# copy the config directory from the host computer to the current stage container
+COPY ./config ./config
+
 # tell the docker container to expose the mentioned port
 EXPOSE 8080
 
