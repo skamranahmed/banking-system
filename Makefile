@@ -41,6 +41,12 @@ build:
 dockerized-server-run:
 	docker run --name banking-system --network banking-system-network -p 8080:8080 -e DB_HOST="postgresql://postgres:password@postgres-local:5432/bank?sslmode=disable" banking-system:latest
 
+dc-up:
+	docker-compose up -d
+
+dc-down:
+	docker-compose down
+
 run:
 	go run main.go
 

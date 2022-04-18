@@ -20,6 +20,20 @@
 ![Banking-System](https://user-images.githubusercontent.com/43776315/163681485-499ea22d-b2fd-49d9-acd6-0d23792cc164.png)
 
 ## 🏃‍♂️ Setup & How to Run
+
+### Using docker-compose
+- **Start the services**
+```bash
+make dc-up
+```
+
+- **Stop the servcies**
+```bash
+make dc-down
+```
+
+<hr>
+
 ### Using Docker (a bit more manual work)
 
 - **Clone the repository**
