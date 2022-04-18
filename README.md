@@ -83,12 +83,15 @@ make run
 ```
 
 2. Dockerized:
-Build the docker image for the backend service:
+
+- Build the docker image for the backend service:
 ```bash
 make build
 ```
 
-Run the docker image for the backend service:
+- Run the docker image for the backend service:
 ```bash
 make dockerized-server-run
 ```
+
+<hr>
